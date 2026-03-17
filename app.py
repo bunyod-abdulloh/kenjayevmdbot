@@ -6,10 +6,9 @@ import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
 
-
-
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
+allowed_updates = ["message", "callback_query", "chat_join_request"]
 
 async def on_startup(dispatcher):
     try:
@@ -25,7 +24,10 @@ async def on_startup(dispatcher):
         pass
 
     try:
-        await bot.set_webhook(WEBHOOK_URL)
+        await bot.set_webhook(
+            url=WEBHOOK_URL,
+            allowed_updates=allowed_updates
+        )
     except Exception as e:
         pass
 
@@ -34,7 +36,6 @@ async def on_shutdown(dispatcher):
     # webhookni o‘chirib qo‘yamiz
     await bot.delete_webhook()
 
-allowed_updates = ["message", "callback_query", "chat_join_request"]
 
 if __name__ == "__main__":
     executor.start_webhook(
@@ -43,7 +44,6 @@ if __name__ == "__main__":
         on_startup=on_startup,
         on_shutdown=on_shutdown,
         skip_updates=True,
-        allowed_updates=allowed_updates,
         host=WEBAPP_HOST,
         port=WEBAPP_PORT,
     )
