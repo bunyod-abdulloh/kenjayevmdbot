@@ -1,8 +1,8 @@
 from aiogram import executor
+import middlewares, filters, handlers
 
 from data.config import WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT, WEBHOOK_HOST
 from loader import dp, bot
-import middlewares, filters, handlers
 from utils.notify_admins import on_startup_notify
 from utils.set_bot_commands import set_default_commands
 
@@ -10,18 +10,19 @@ WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
 allowed_updates = ["message", "callback_query", "chat_join_request"]
 
+
 async def on_startup(dispatcher):
     try:
         await set_default_commands(dispatcher)
 
     except Exception as e:
-        pass
+        print(f"SET DEFAULT COMMANDS ERROR: {e}")
 
     try:
         await on_startup_notify(dispatcher)
 
     except Exception as e:
-        pass
+        print(f"ON STARTUP ERROR: {e}")
 
     try:
         await bot.set_webhook(
@@ -29,7 +30,7 @@ async def on_startup(dispatcher):
             allowed_updates=allowed_updates
         )
     except Exception as e:
-        pass
+        print(f"SET WEBHOOK_URL ERROR: {e}")
 
 
 async def on_shutdown(dispatcher):
